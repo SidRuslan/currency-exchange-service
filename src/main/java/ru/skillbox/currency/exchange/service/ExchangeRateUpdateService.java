@@ -12,7 +12,8 @@ import ru.skillbox.currency.exchange.repository.CurrencyRepository;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 
 @Slf4j
@@ -31,14 +32,12 @@ public class ExchangeRateUpdateService {
 
            JAXBContext context = JAXBContext.newInstance(CurrencyListDto.class, CurrencyDto.class);
            CurrencyListDto currencyDto = (CurrencyListDto) context.createUnmarshaller()
-                   .unmarshal(new URL("https://www.cbr-xml-daily.ru/daily_utf8.xml"));
+                   .unmarshal(new URI("https://www.cbr-xml-daily.ru/daily_utf8.xml").toURL());
 
            currencyDto.getCurrencyDtoList().forEach(this::updateExchangeRates);
-       } catch (JAXBException e) {
+       } catch (JAXBException | MalformedURLException | URISyntaxException e) {
            log.error("Error in ExchangeRateUpdateService method getCurrentExchangeRate");
            e.printStackTrace();
-       } catch (MalformedURLException e) {
-           throw new RuntimeException(e);
        }
     }
 
