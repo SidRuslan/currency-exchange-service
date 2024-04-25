@@ -2,6 +2,7 @@ package ru.skillbox.currency.exchange.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import ru.skillbox.currency.exchange.dto.CurrencyDto;
@@ -22,6 +23,8 @@ import java.net.URISyntaxException;
 
 public class ExchangeRateUpdateService {
 
+    @Value("${foreign-currency-market.api.getCurrencies}")
+    private String foreignCurrencyMarketLink;
     private final CurrencyService currencyService;
     private final CurrencyRepository currencyRepository;
 
@@ -32,7 +35,7 @@ public class ExchangeRateUpdateService {
 
            JAXBContext context = JAXBContext.newInstance(CurrencyListDto.class, CurrencyDto.class);
            CurrencyListDto currencyDto = (CurrencyListDto) context.createUnmarshaller()
-                   .unmarshal(new URI("https://www.cbr-xml-daily.ru/daily_utf8.xml").toURL());
+                   .unmarshal(new URI(foreignCurrencyMarketLink).toURL());
 
            currencyDto.getCurrencyDtoList().forEach(this::updateExchangeRates);
        } catch (JAXBException | MalformedURLException | URISyntaxException e) {

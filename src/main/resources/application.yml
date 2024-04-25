@@ -21,3 +21,7 @@ spring:
         hbm2ddl:
           auto: none
 
+foreign-currency-market:
+  api:
+    getCurrencies: https://www.cbr-xml-daily.ru/daily_utf8.xml
+
